@@ -1,0 +1,188 @@
+{
+  "nbformat": 4,
+  "nbformat_minor": 0,
+  "metadata": {
+    "colab": {
+      "provenance": []
+    },
+    "kernelspec": {
+      "name": "python3",
+      "display_name": "Python 3"
+    },
+    "language_info": {
+      "name": "python"
+    }
+  },
+  "cells": [
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "Z7bDiGKo8rrv",
+        "outputId": "16be0586-c53f-4ece-eb7c-e92c8ebdc120"
+      },
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "\u001b[?25l   \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m0.0/143.7 kB\u001b[0m \u001b[31m?\u001b[0m eta \u001b[36m-:--:--\u001b[0m\r\u001b[2K   \u001b[91m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[91m╸\u001b[0m \u001b[32m143.4/143.7 kB\u001b[0m \u001b[31m5.8 MB/s\u001b[0m eta \u001b[36m0:00:01\u001b[0m\r\u001b[2K   \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m143.7/143.7 kB\u001b[0m \u001b[31m3.4 MB/s\u001b[0m eta \u001b[36m0:00:00\u001b[0m\n",
+            "\u001b[?25h"
+          ]
+        }
+      ],
+      "source": [
+        "!pip install groq transformers -q\n"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "from google.colab import userdata\n",
+        "from groq import Groq\n"
+      ],
+      "metadata": {
+        "id": "C5_ZkTMK89wp"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "api_key = userdata.get(\"GROQ_API_KEY\")\n",
+        "client = Groq(api_key=api_key)\n"
+      ],
+      "metadata": {
+        "id": "StQzlJP29Bhp"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# ---------------------------------------\n",
+        "# Role-Based Prompt\n",
+        "# ---------------------------------------\n",
+        "\n",
+        "role_prompt = \"\"\"\n",
+        "You are a financial advisor.\n",
+        "\n",
+        "Give five simple tips for saving money for college students.\n",
+        "\"\"\"\n",
+        "\n",
+        "role_response = client.chat.completions.create(\n",
+        "    model=\"llama-3.3-70b-versatile\",\n",
+        "    messages=[\n",
+        "        {\"role\": \"user\", \"content\": role_prompt}\n",
+        "    ]\n",
+        ")\n",
+        "\n",
+        "# ---------------------------------------\n",
+        "# Negative Prompt\n",
+        "# ---------------------------------------\n",
+        "\n",
+        "negative_prompt = \"\"\"\n",
+        "You are a financial advisor.\n",
+        "\n",
+        "Give five simple tips for saving money for college students.\n",
+        "\n",
+        "Do not mention any bank names or brand names.\n",
+        "\"\"\"\n",
+        "\n",
+        "negative_response = client.chat.completions.create(\n",
+        "    model=\"llama-3.3-70b-versatile\",\n",
+        "    messages=[\n",
+        "        {\"role\": \"user\", \"content\": negative_prompt}\n",
+        "    ]\n",
+        ")\n",
+        "\n",
+        "# ---------------------------------------\n",
+        "# Display Results\n",
+        "# ---------------------------------------\n",
+        "\n",
+        "print(\"========== Role-Based Prompt ==========\\n\")\n",
+        "print(role_prompt)\n",
+        "\n",
+        "print(\"\\nOutput:\\n\")\n",
+        "print(role_response.choices[0].message.content)\n",
+        "\n",
+        "print(\"\\n\\n========== Negative Prompt ==========\\n\")\n",
+        "print(negative_prompt)\n",
+        "\n",
+        "print(\"\\nOutput:\\n\")\n",
+        "print(negative_response.choices[0].message.content)\n"
+      ],
+      "metadata": {
+        "id": "vaLdC7a19H84",
+        "outputId": "636d457e-447d-444f-d2cf-7be326c4663a",
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        }
+      },
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "========== Role-Based Prompt ==========\n",
+            "\n",
+            "\n",
+            "You are a financial advisor.\n",
+            "\n",
+            "Give five simple tips for saving money for college students.\n",
+            "\n",
+            "\n",
+            "Output:\n",
+            "\n",
+            "As a financial advisor, I've worked with many college students to help them manage their finances effectively. Here are five simple tips for saving money that I'd like to share:\n",
+            "\n",
+            "1. **Create a budget**: Start by tracking your income and expenses to understand where your money is going. Make a budget that accounts for all your necessary expenses, such as tuition, room, and board, as well as discretionary spending, like entertainment and hobbies. Allocate 50-30-20: 50% for necessary expenses, 30% for discretionary spending, and 20% for saving and debt repayment.\n",
+            "\n",
+            "2. **Take advantage of student discounts**: Many businesses offer discounts to students, so always ask if a student discount is available. This can include discounts on software, clothing, travel, and even insurance. Use your student ID to get discounts on everyday items, which can add up to significant savings over time.\n",
+            "\n",
+            "3. **Cook your own meals**: Eating out can be expensive, so try to cook your own meals as much as possible. Plan your meals, buy ingredients in bulk, and use coupons to reduce your grocery bills. You can also consider meal prepping or cooking with friends to make it more affordable and fun.\n",
+            "\n",
+            "4. **Use cashback and rewards programs**: Sign up for cashback and rewards programs that offer points or cash for using certain credit cards, shopping at specific stores, or referring friends. Use these programs for your daily purchases, and redeem your rewards for cash, gift cards, or other benefits. Just be sure to pay your balances in full each month to avoid interest charges.\n",
+            "\n",
+            "5. **Save a portion of your financial aid**: If you receive financial aid, such as scholarships, grants, or loans, consider saving a portion of it in a separate savings account. This will help you build an emergency fund, pay for unexpected expenses, or use it towards future semesters' tuition. Aim to save at least 10% to 20% of your financial aid each semester.\n",
+            "\n",
+            "By following these simple tips, college students can develop healthy financial habits, reduce their expenses, and save money for the future. Remember, saving is a long-term process, so start early and be consistent!\n",
+            "\n",
+            "\n",
+            "========== Negative Prompt ==========\n",
+            "\n",
+            "\n",
+            "You are a financial advisor.\n",
+            "\n",
+            "Give five simple tips for saving money for college students.\n",
+            "\n",
+            "Do not mention any bank names or brand names.\n",
+            "\n",
+            "\n",
+            "Output:\n",
+            "\n",
+            "As a financial advisor, I'd be happy to help. Here are five simple tips for saving money that are specifically tailored for college students:\n",
+            "\n",
+            "1. **Create a budget**: Start by tracking your income and expenses to see where your money is going. Make a budget that accounts for all your necessary expenses, such as tuition, room, and board, and then identify areas where you can cut back on non-essential spending.\n",
+            "\n",
+            "2. **Prioritize needs over wants**: Be honest with yourself about what you need versus what you want. Do you really need that expensive coffee every morning, or can you make do with a cheaper alternative? Make conscious choices to spend your money on things that are truly important to you.\n",
+            "\n",
+            "3. **Take advantage of student discounts**: As a college student, you're likely eligible for all sorts of discounts on everything from software to movies to clothing. Take advantage of these discounts to save money on the things you need and want.\n",
+            "\n",
+            "4. **Cook your own meals**: Eating out can be expensive, especially if you're ordering takeout or dining at restaurants regularly. Try cooking your own meals instead, and consider buying groceries in bulk to save even more money.\n",
+            "\n",
+            "5. **Use the 50/30/20 rule**: Allocate 50% of your income towards necessary expenses like tuition, room, and board, 30% towards discretionary spending, and 20% towards saving and debt repayment. This will help you prioritize your spending and make sure you're setting aside enough money for the future.\n",
+            "\n",
+            "By following these tips, you can save money, reduce financial stress, and set yourself up for long-term financial success.\n"
+          ]
+        }
+      ]
+    }
+  ]
+}
